@@ -21,14 +21,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={font.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
+        <ThemeProvider attribute="class" enableSystem disableTransitionOnChange>
+          <div className="bg-white h-screen text-black">
+            {children}
+            <Toaster />
+          </div>
         </ThemeProvider>
       </body>
     </html>
