@@ -20,16 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={font.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+      <body className={font.className}> 
+          <div className="bg-white h-screen text-black">
+            {children}
+            <Toaster />
+          </div>
       </body>
     </html>
   );
