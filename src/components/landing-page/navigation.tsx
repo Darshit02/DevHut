@@ -37,7 +37,7 @@ const Navigation = ({}: Props) => {
         ) : (
           <div className="flex items-center gap-3">
             <Link
-              href={"/login"}
+              href={"/sign-in"}
               className="bg-primary text-white p-2 px-4 rounded-md hover:bg-primary/80 flex gap-2 items-center"
             >
               Login

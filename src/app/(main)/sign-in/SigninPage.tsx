@@ -1,89 +1,105 @@
-"use client"
-import React from "react";
+"use client";
+import React, { useState, useTransition } from "react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { FaGithub, FaGoogle } from "react-icons/fa";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { FaCode, FaGithub } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 import { handleGoogleSignIn } from "@/lib/auth/SignInServerAction";
+import Link from "next/link";
+import { handleEmailSignIn } from "@/lib/auth/EmailSignInAction";
 
 
 type Props = {};
 
 const SigninPage = (props: Props) => {
+
+  const [isPending, startTransition] = useTransition();
+  const [formData, setFormData] = useState({ email: "" as string });
+
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      await handleEmailSignIn(formData.email);
+    } catch (error) {
+      console.error("Sign-in error:", error);
+      // Handle the error (e.g., show an error message to the user)
+    }
+  };
+
   return (
-    <div className="mx-auto max-w-md space-y-6 py-12">
-      <div className="space-y-2 text-center">
-        <h1 className="text-3xl font-bold text-primary">Welcome to DevHut</h1>
-        <p className="text-muted-foreground">
-          Sign up to start chatting with other developers.
-        </p>
-      </div>
-      <Card className="bg-card text-card-foreground ">
-        <CardContent className="space-y-4">
-          <div className="space-y-2 mt-5">
-            <Label htmlFor="name" className="text-primary-foreground ">
-              Name
-            </Label>
+    <div className="flex flex-col lg:flex-row min-h-screen">
+      <div className="flex flex-col justify-center w-full h-screen lg:w-1/2 p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 bg-white text-gray-500">
+        <div className="flex items-center space-x-2">
+          <FaCode className="h-5 w-5 sm:h-6 sm:w-6" />
+          <h1 className="text-xl sm:text-2xl font-bold">DevHut</h1>
+        </div>
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-bold">Namaste,</h2>
+          <p className="text-sm sm:text-base text-gray-500">
+            Login to start chatting with other developers.
+          </p>
+        </div>
+        <form className="space-y-3 sm:space-y-4" onSubmit={handleSubmit}>
+          <div>
             <Input
-              id="name"
-              placeholder="Enter your name"
-              className="border-primary"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-primary-foreground">
-              Email
-            </Label>
-            <Input
-              id="email"
               type="email"
-              placeholder="Enter your email"
-              className="border-primary"
+              placeholder="example@gmail.com"
+              className="w-full"
+              maxLength={320}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setFormData({ email: event.target.value })
+              }
+              disabled={isPending}
+              required
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-primary-foreground">
-              Password
-            </Label>
+          <div>
             <Input
-              id="password"
               type="password"
-              placeholder="Enter a password"
-              className="border-primary"
+              placeholder="**********"
+              className="w-full"
+              required
             />
           </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="terms" />
-            <Label htmlFor="terms" className="text-primary-foreground">
-              I agree to the terms of service
-            </Label>
-          </div>
-          <div className="flex flex-row items-center justify-center gap-4">
-            <Button
-              variant="outline"
-              className="flex items-center justify-center gap-2 flex-1"
-            >
-              <FaGithub className="h-5 w-5" />
-              Github
-            </Button>
-            <Button
-              onClick={() => handleGoogleSignIn()}
-              variant="outline"
-              className="flex items-center justify-center gap-2 flex-1"
-            >
-              <FaGoogle className="h-5 w-5" />
-              Google
-            </Button>
-          </div>
-        </CardContent>
-        <CardFooter className="flex flex-col items-center gap-4 justify-between">
-          <Button className="w-full bg-primary text-primary-foreground">
-            Sign Up
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 text-white"
+          >
+            Sign In with Email
           </Button>
-        </CardFooter>
-      </Card>
+        </form>
+        <Separator className="text-black my-2" />
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+          <Button
+            variant="outline"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto sm:flex-1 relative"
+            disabled
+            title="Coming soon"
+          >
+            <FaGithub className="h-4 w-4 sm:h-5 sm:w-5" />
+            Github
+          </Button>
+          <Button
+            onClick={() => handleGoogleSignIn()}
+            variant="outline"
+            className="flex items-center justify-center gap-2 w-full sm:w-auto sm:flex-1"
+          >
+            <FcGoogle className="h-4 w-4 sm:h-5 sm:w-5" />
+            Google
+          </Button>
+        </div>
+      </div>
+      <div className="hidden lg:flex lg:w-1/2 h-screen bg-white items-center justify-center p-4">
+        <img
+          src="/assets/Login.png"
+          alt="Login Illustration"
+          className="w-full h-full object-cover rounded-lg -scale-x-100"
+        />
+      </div>
     </div>
   );
 };
