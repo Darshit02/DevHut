@@ -1,8 +1,6 @@
 "use client";
 import React, { useState, useTransition } from "react";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { FaCode, FaGithub } from "react-icons/fa";
@@ -10,26 +8,33 @@ import { FcGoogle } from "react-icons/fc";
 import { handleGoogleSignIn } from "@/lib/auth/SignInServerAction";
 import Link from "next/link";
 import { handleEmailSignIn } from "@/lib/auth/EmailSignInAction";
+import { useRouter } from "next/navigation";
 
 
 type Props = {};
 
 const SigninPage = (props: Props) => {
 
-  const [isPending, startTransition] = useTransition();
-  const [formData, setFormData] = useState({ email: "" as string });
-
+  const [isPending, startTransition] = useTransition()
+  const [formData, setFormData] = useState({ email: "", password: "" })
+  const router = useRouter()
 
   const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
-    try {
-      await handleEmailSignIn(formData.email);
-    } catch (error) {
-      console.error("Sign-in error:", error);
-      // Handle the error (e.g., show an error message to the user)
-    }
-  };
+    event.preventDefault()
+    startTransition(async () => {
+      try {
+        await handleEmailSignIn(formData.email, formData.password)
+        // If we get here, it means the sign-in was successful
+        router.push("/dashboard")  // or wherever you want to redirect after successful sign-in
+      } catch (error) {
+        console.error("Sign-in error:", error)
+        // Handle the error (e.g., show an error message to the user)
+      }
+    })
+  }
 
+
+  
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
       <div className="flex flex-col justify-center w-full h-screen lg:w-1/2 p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 bg-white text-gray-500">
@@ -51,7 +56,7 @@ const SigninPage = (props: Props) => {
               className="w-full"
               maxLength={320}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setFormData({ email: event.target.value })
+                setFormData({ ...formData, email: event.target.value })
               }
               disabled={isPending}
               required
@@ -62,6 +67,10 @@ const SigninPage = (props: Props) => {
               type="password"
               placeholder="**********"
               className="w-full"
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                setFormData({ ...formData, password: event.target.value })
+              }
+              disabled={isPending}
               required
             />
           </div>

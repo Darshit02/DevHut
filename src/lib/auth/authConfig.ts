@@ -6,6 +6,11 @@ import { PrismaClient } from "@prisma/client";
 // providers
 import Google from "next-auth/providers/google";
 import Resend from "next-auth/providers/resend";
+import Credentials from "next-auth/providers/credentials"
+
+//for creating user and encryption
+import { saltAndHashPassword } from "../password/saltAndHashPassword";
+import { getUser } from "../actions/getUser";
 
 const prisma = new PrismaClient();
 
@@ -30,6 +35,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       apiKey: process.env.AUTH_RESEND_KEY,
       from: process.env.EMAIL_FROM
     }),
+    Credentials({
+      credentials: {
+        email: { type: "email" },
+        password: { type: "password" }
+      },
+      authorize: async (credentials) => {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Email and password are required");
+        }
+    
+        const email = credentials.email as string;
+        const password = credentials.password as string;
+    
+        try {
+          // Try to get the user
+          let user = await getUser(email, password);
+    
+          if (!user) {
+            // User not found or incorrect password
+            throw new Error("Invalid email or password");
+          }
+    
+          // Return the user object
+          return user;
+        } catch (error) {
+          // console.error("Error in authorization:", error);
+          throw error; // Re-throw the error to be caught by NextAuth
+        }
+      },
+    }),
   ],
   callbacks: {
     async jwt({ token, user }) {
@@ -42,7 +77,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      console.log("Session callback", { session, token });
+      // console.log("Session callback", { session, token });
       return {
         ...session,
         user: {
@@ -54,3 +89,5 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   debug: true,
 });
+
+
