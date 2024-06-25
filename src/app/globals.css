@@ -62,10 +62,19 @@ B (255 */
   --ring: 163 100% 92%;
 }
 
-@layer base {
-  * {
-    @apply border-border;
+@layer utilities {
+  .border-border {
+    border: 1px solid var(--border);
   }
+  .bg-background {
+    background-color: var(--background);
+  }
+  .text-foreground {
+    color: var(--foreground);
+  }
+}
+
+@layer base {
   body {
     @apply bg-background text-foreground;
   }
@@ -91,4 +100,3 @@ B (255 */
     transform: scale(1);
   }
 }
-
