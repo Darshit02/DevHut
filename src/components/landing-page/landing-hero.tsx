@@ -7,6 +7,7 @@ import ImageContainer from "./image-container";
 import Tags from "./tags";
 import TextInfo from "./text-info";
 import WordRotate from "../magicui/word-rotate";
+import VideoCompo from "./video-component";
 
 type Props = {};
 
@@ -55,11 +56,9 @@ const LandingHero = (props: Props) => {
         <TextInfo />
       </section>
       <section className="mt-[10rem] flex items-center justify-center">
-        <div className="flex justify-center items-center text-6xl font-medium text-gray-700">
-          <h1 className="">
+        <div className="flex justify-center items-center flex-col ">
+          <div className="text-center text-6xl font-medium text-gray-700">
             Introduction to DevHut's
-          </h1>
-          {/* Bug */}
             <WordRotate
               className="px-2 py-1 rounded-full"
               words={[
@@ -70,6 +69,8 @@ const LandingHero = (props: Props) => {
                 "codeShare",
               ]}
             />
+          </div>
+          <VideoCompo/>           
         </div>
       </section>
     </>
